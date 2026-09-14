@@ -5,8 +5,7 @@ on:
     branches: [main]
 
 env:
-  # TODO: durch den Namen deiner Azure Web App ersetzen
-  AZURE_WEBAPP_NAME: tagebbbuch-dontschewniclas
+  AZURE_WEBAPP_NAME: DontschewNiclasLB-324
 
 jobs:
   deploy:
