@@ -1,17 +1,38 @@
-# LB 324
+# LB 324 - Tagebbbuch
 
-## Lokal starten
+## App lokal starten
+
+Zuerst die Abhängigkeiten installieren:
 
 ```
 pip install -r requirements.txt
+```
+
+Damit die App läuft, braucht es noch eine `.env`-Datei im Projektordner mit
+folgendem Inhalt:
+
+```
+PASSWORD="einSehrGeheimesPasswort"
+```
+
+(du kannst hier ein beliebiges eigenes Passwort einsetzen)
+
+Danach kann die App gestartet werden mit:
+
+```
 flask run
 ```
 
-Vorher eine `.env`-Datei im Format `PASSWORD="einSehrGeheimesPasswort"` anlegen.
+## Aufgabe 2 - pre-commit
 
-## Aufgabe 2
+Ich habe `pre-commit` so eingerichtet, dass zwei Dinge automatisch passieren:
 
-`pre-commit` installieren und einrichten:
+- Bei jedem `commit` wird der Code mit `black` formatiert.
+- Bei jedem `push` laufen die Tests (`pytest`). Wenn ein Test fehlschlägt,
+  wird der Push abgebrochen.
+
+Damit das bei dir auch funktioniert, muss `pre-commit` einmalig installiert
+und aktiviert werden:
 
 ```
 pip install pre-commit
@@ -19,40 +40,44 @@ pre-commit install
 pre-commit install --hook-type pre-push
 ```
 
+Der zweite Befehl ist nötig, weil `pre-commit install` allein nur den
+`commit`-Hook aktiviert - für den `push`-Hook braucht es den Zusatz
+`--hook-type pre-push`.
 
-- `pre-commit install` aktiviert den `pre-commit`-Hook: bei jedem `git commit`
-  wird der Code automatisch mit `black` formatiert.
-- `pre-commit install --hook-type pre-push` aktiviert den `pre-push`-Hook: bei
-  jedem `git push` werden die Tests (`pytest`) ausgeführt. Schlagen sie fehl,
-  wird der `push` abgebrochen.
+## Aufgabe 4 - Tests bei Pull Requests
 
-## Aufgabe 4
+Sobald ein Pull Request auf den `dev`-Ast erstellt wird, laufen automatisch
+die Tests über GitHub Actions (`.github/workflows/pr-tests.yml`). So sieht
+man vor dem Merge, ob etwas kaputt ist.
 
-Die Tests laufen bei jedem `pull request` auf den `dev`-Ast automatisch über
-die GitHub Action `.github/workflows/pr-tests.yml`.
+## Aufgabe 5 - Deployment nach Azure
 
-## Aufgabe 5
+Die App läuft hier:
 
-Laufende Applikation: **https://dontschewniclaslb-324-g9bmfub8a4aebdhz.germanywestcentral-01.azurewebsites.net/**
+**https://dontschewniclaslb-324-g9bmfub8a4aebdhz.germanywestcentral-01.azurewebsites.net/**
 
-### Passwort von der lokalen `.env` nach Azure übertragen
+### Passwort nach Azure übertragen
 
-1. Azure Portal → die Web App öffnen.
-2. Links im Menü **Einstellungen → Umgebungsvariablen** (bzw. *Configuration
-   → Application settings*) wählen.
-3. Eine neue Anwendungseinstellung hinzufügen:
+Das Passwort steht bei mir lokal in der `.env`-Datei, die aber nicht mit ins
+Repository kommt (steht in der `.gitignore`). Damit die App auf Azure trotzdem
+weiss, welches Passwort gilt, habe ich es direkt in Azure als
+Umgebungsvariable hinterlegt:
+
+1. Im Azure Portal die Web App öffnen.
+2. Links im Menü zu "Umgebungsvariablen" gehen.
+3. Eine neue Variable hinzufügen:
    - Name: `PASSWORD`
-   - Wert: `nic2795` (der eigene github-Benutzername, wie in der Prüfung
-     verlangt)
-4. Speichern — die Web App startet danach neu.
+   - Wert: `nic2795` (mein GitHub-Benutzername, wie in der Prüfung verlangt)
+4. Speichern - die Web App startet danach automatisch neu.
 
-So liest `os.getenv("PASSWORD")` in `app.py` das Passwort direkt aus der
-Azure-Konfiguration, ohne dass die `.env`-Datei mit ausgeliefert werden muss
-(sie ist über `.gitignore` ohnehin vom Repository ausgeschlossen).
+`app.py` liest das Passwort über `os.getenv("PASSWORD")` - dadurch macht es
+keinen Unterschied, ob die Variable aus der lokalen `.env` oder aus der
+Azure-Konfiguration kommt.
 
-### Automatische Auslieferung
+### Automatisches Deployment
 
-Bei jedem erfolgreichen `merge` in den `main`-Ast liefert die GitHub Action
-`.github/workflows/deploy-azure.yml` die Applikation automatisch auf Azure
-aus. Dafür wird das Azure *Publish Profile* als GitHub-Secret
-`AZURE_WEBAPP_PUBLISH_PROFILE` benötigt (siehe Schritt-für-Schritt-Anleitung).
+Jedes Mal, wenn etwas in den `main`-Ast gemerged wird, liefert die GitHub
+Action `.github/workflows/deploy-azure.yml` die App automatisch auf Azure
+aus. Damit das funktioniert, musste ich einmalig das Azure Publish Profile
+herunterladen und als GitHub-Secret mit dem Namen
+`AZURE_WEBAPP_PUBLISH_PROFILE` im Repository hinterlegen.
