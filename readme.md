@@ -19,6 +19,7 @@ pre-commit install
 pre-commit install --hook-type pre-push
 ```
 
+
 - `pre-commit install` aktiviert den `pre-commit`-Hook: bei jedem `git commit`
   wird der Code automatisch mit `black` formatiert.
 - `pre-commit install --hook-type pre-push` aktiviert den `pre-push`-Hook: bei
@@ -32,8 +33,7 @@ die GitHub Action `.github/workflows/pr-tests.yml`.
 
 ## Aufgabe 5
 
-Laufende Applikation: **TODO: URL nach der Auslieferung hier eintragen**
-(z. B. `https://tagebbbuch-dontschewniclas.azurewebsites.net`)
+Laufende Applikation: **https://dontschewniclaslb-324-g9bmfub8a4aebdhz.germanywestcentral-01.azurewebsites.net/**
 
 ### Passwort von der lokalen `.env` nach Azure übertragen
 
@@ -42,8 +42,8 @@ Laufende Applikation: **TODO: URL nach der Auslieferung hier eintragen**
    → Application settings*) wählen.
 3. Eine neue Anwendungseinstellung hinzufügen:
    - Name: `PASSWORD`
-   - Wert: `MaxMuster_TheProGrammer` (bei der Auslieferung durch den eigenen
-     github-Benutzernamen ersetzen, wie in der Prüfung verlangt)
+   - Wert: `nic2795` (der eigene github-Benutzername, wie in der Prüfung
+     verlangt)
 4. Speichern — die Web App startet danach neu.
 
 So liest `os.getenv("PASSWORD")` in `app.py` das Passwort direkt aus der
